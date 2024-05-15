@@ -128,7 +128,7 @@
         async function loadPdfForm() {
             const urlParams = new URLSearchParams(window.location.search);
             const type = urlParams.get('type') || 'default';
-            const pdfPath = `/path/to/pdf/forms/${type}.pdf`;
+            const pdfPath = `${type}.pdf`;
 
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
             pdfDoc = await pdfjsLib.getDocument(pdfPath).promise;
