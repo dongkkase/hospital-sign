@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fabric.js Drawing and Text</title>
+  <style>
+    .canvas-container {
+      border: 1px solid #000;
+      width: 900%;
+      height: 1000px;
+    }
+  </style>
+</head>
+<body>
+  <div>
+    <button id="draw-mode">Draw Mode</button>
+    <button id="text-mode">Text Mode</button>
+    <button id="clear">Clear</button>
+    <button id="save-jpg">Save as JPG</button>
+    <button id="save-pdf">Save as PDF</button>
+  </div>
+  <canvas id="canvas" class="canvas-container"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/460/fabric.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', function() {
+  var canvas = new fabric.Canvas('canvas');
+
+  // 기본 설정
+  canvas.isDrawingMode = true;
+  canvas.freeDrawingBrush.width = 5;
+  canvas.freeDrawingBrush.color = 'black';
+
+  // 그리기 모드 버튼
+  document.getElementById('draw-mode').addEventListener('click', function() {
+    canvas.isDrawingMode = true;
+  });
+
+  // 텍스트 모드 버튼
+  document.getElementById('text-mode').addEventListener('click', function() {
+    canvas.isDrawingMode = false;
+    var text = new fabric.IText('Tap and Type', {
+      left: 100,
+      top: 100,
+      fontFamily: 'arial',
+      fill: '#333',
+      fontSize: 20
+    });
+    canvas.add(text);
+    canvas.setActiveObject(text);
+    text.enterEditing();
+  });
+
+  // 캔버스 초기화 버튼
+  document.getElementById('clear').addEventListener('click', function() {
+    canvas.clear();
+  });
+
+  // JPG로 저장 버튼
+  document.getElementById('save-jpg').addEventListener('click', function() {
+    html2canvas(canvas.getElement()).then(function(canvasElement) {
+      var link = document.createElement('a');
+      link.href = canvasElement.toDataURL('image/jpeg');
+      link.download = 'canvas.jpg';
+      link.click();
+    });
+  });
+
+  // PDF로 저장 버튼
+  document.getElementById('save-pdf').addEventListener('click', function() {
+    html2canvas(canvas.getElement()).then(function(canvasElement) {
+      var imgData = canvasElement.toDataURL('image/jpeg');
+      const { jsPDF } = window.jspdf;
+      var pdf = new jsPDF();
+      pdf.addImage(imgData, 'JPEG', 0, 0);
+      pdf.save('canvas.pdf');
+    });
+  });
+
+  // 캔버스 크기 조절
+  function resizeCanvas() {
+    var container = document.querySelector('.canvas-container');
+    canvas.setWidth(900);
+    canvas.setHeight(1200);
+    // canvas.setWidth(container.clientWidth);
+    // canvas.setHeight(container.clientHeight);
+    canvas.renderAll();
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+});
+
+
+
+  </script>
+</body>
+</html>
